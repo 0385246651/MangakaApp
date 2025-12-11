@@ -1,0 +1,216 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Hải Bá Bá - MangakaApp</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MangakaApp.styles.css" asp-append-version="true" />
+
+</head>
+<body class="d-flex flex-column min-vh-100">
+    @* Thêm min-vh-100 để footer luôn ở dưới cùng *@
+    @* --- LOADING OVERLAY (MỚI) --- *@
+    <div id="global-loader">
+        <div class="loader-spinner"></div>
+    </div>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-3 border-bottom border-secondary"
+             style="background-color: #1a202c; border-color: #2d3748 !important;">
+
+            <div class="container">
+                @* Logo *@
+                <a class="navbar-brand d-flex align-items-center fw-bold text-white" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-book-half me-2 text-warning" style="font-size: 1.5rem;"></i>
+                    <span style="font-family: sans-serif; line-height: 1.2;">
+                        Hải Bá Bá<br />
+                        <small style="font-size: 0.8rem; opacity: 0.8;">Mangaka App</small>
+                    </span>
+                </a>
+
+                @* Nút Mobile Menu *@
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+
+                    @* THANH TÌM KIẾM RESPONSIVE 
+                   - Trên PC (lg): margin-auto để ra giữa.
+                   - Trên Mobile: width 100%.
+                *@
+                    <form class="d-flex my-3 my-lg-0 mx-lg-auto search-bar-responsive"
+                          asp-controller="Home" asp-action="Search" method="get">
+
+                        <div class="input-group bg-white bg-opacity-10 rounded-pill border border-secondary px-2 w-100">
+                            <span class="input-group-text bg-transparent border-0 text-white-50">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="text" name="keyword"
+                                   class="form-control bg-transparent border-0 text-white shadow-none search-input"
+                                   placeholder="Tìm kiếm truyện..."
+                                   value="@ViewData["CurrentKeyword"]">
+                        </div>
+                    </form>
+
+                    @* Danh sách Menu *@
+                    <ul class="navbar-nav align-items-lg-center gap-2 pt-2 pt-lg-0">
+
+                        @* ... Các menu Truyện hot, Đang phát hành... GIỮ NGUYÊN ... *@
+                        <li class="nav-item">
+                            <a class="nav-link text-light fw-medium nav-link-hover-effect" href="/Home/HotManga">
+                                <i class="bi bi-fire me-1 text-danger"></i>Hot
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light fw-medium nav-link-hover-effect" href="/Home/ReleasingManga">
+                                <i class="bi bi-star me-1 text-warning"></i>Mới
+                            </a>
+                        </li>
+
+                         <li class="nav-item">
+                            <a class="nav-link text-light fw-medium nav-link-hover-effect" href="/Home/ReleasingManga">
+                                <i class="bi bi-hourglass-split me-1 text-warning"></i>Đang
+                            </a>
+                        </li
+
+                        <li class="nav-item">
+                            <a class="nav-link text-light fw-medium nav-link-hover-effect" href="/Home/DoneManga">
+                                <i class="bi bi-check-circle-fill me-1 text-warning"></i>Xong
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-light fw-medium nav-link-hover-effect" href="/Home/CommingManga">
+                                <i class="bi-clock-history me-1 text-warning"></i>Sắp
+                            </a>
+                        </li>
+
+                        @* Dropdown Thể loại *@
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light fw-medium nav-link-hover-effect" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-tags me-1"></i>Thể loại
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark shadow border-secondary"
+                                aria-labelledby="navbarDropdown"
+                                style="background-color: #2d3748; max-height: 400px; overflow-y: auto;">
+                                @await Component.InvokeAsync("CategoryMenu")
+                            </ul>
+                        </li>
+
+                        @* CHUÔNG THÔNG BÁO AJAX *@
+                        <li class="nav-item d-flex align-items-center ms-lg-3 mt-2 mt-lg-0">
+                            <div class="notification-container position-relative">
+                                <div class="nav-link text-light position-relative cursor-pointer notification-icon p-0">
+                                    <i class="bi bi-bell-fill" style="font-size: 1.4rem;"></i>
+                                    <span id="msg-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-dark d-none"
+                                          style="font-size: 0.6rem; padding: 0.25em 0.5em;">0</span>
+                                </div>
+
+                                @* Tooltip AJAX *@
+                                <div class="notification-tooltip shadow-lg">
+                                    <div class="tooltip-arrow"></div>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-calendar-check me-2"></i>
+                                        <span class="fw-bold text-uppercase" style="font-size: 0.8rem;">Cập nhật hôm nay</span>
+                                    </div>
+                                    <div class="text-center">
+                                        <span id="msg-tooltip-count" class="display-5 fw-bold text-white">0</span>
+                                        <div class="small text-white-50 fst-italic">truyện mới</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                        @* Nút Đăng nhập *@
+                        @* <li class="nav-item ms-lg-2 mt-2 mt-lg-0"> ... </li> *@
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class=" flex-grow-1">
+        @RenderBody()
+    </main>
+
+    @* Footer *@
+    <footer class="mt-4 py-4 border-top border-secondary text-white-50" style="background-color: #121621;">
+        <div class="container text-center">
+            @* text-white: Giữ dòng bản quyền màu trắng cho nổi bật *@
+            <p class="mb-1 text-white fw-bold">
+                &copy; 2025 MangakaApp - Website đọc truyện tranh
+            </p>
+
+            @* text-decoration-none: Nếu bạn bọc dòng này trong thẻ a sau này *@
+            <small class="d-block">
+                Raiden from <span class="text-primary">EAS Team</span> - Gemtek company
+            </small>
+        </div>
+    </footer>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+<script>
+    $(document).ready(function () {
+        // Gọi API lấy số lượng truyện mới
+        $.ajax({
+            url: '/Home/GetDailyUpdateCount', // Đường dẫn tới Action vừa tạo
+            type: 'GET',
+            success: function (response) {
+                var count = response.count;
+
+                // 1. Cập nhật số trong Tooltip
+                $('#msg-tooltip-count').text(count);
+
+                // 2. Cập nhật Badge trên chuông
+                if (count > 0) {
+                    $('#msg-badge').text(count);
+                    $('#msg-badge').removeClass('d-none'); // Hiện badge nếu có số lượng > 0
+                } else {
+                    $('#msg-badge').addClass('d-none'); // Ẩn badge nếu = 0
+                }
+            },
+            error: function (err) {
+                console.log("Lỗi tải thông báo: ", err);
+            }
+        });
+    });
+</script>
+</html>
+
+
+<script>
+    // Xử lý hiệu ứng chuyển trang mượt mà
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // 1. Tìm tất cả các link nội bộ (Pagination, Card truyện, Menu)
+        const links = document.querySelectorAll('a[href^="/"], a[href^="?"]');
+
+        links.forEach(link => {
+            link.addEventListener("click", function (e) {
+                // Bỏ qua nếu mở tab mới hoặc là link neo (#)
+                if (link.target === "_blank" || link.getAttribute("href").startsWith("#")) return;
+
+                // Hiện loader
+                document.body.classList.add("loading");
+
+                // (Tùy chọn) Scroll mượt lên đầu trang
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // 2. Ẩn loader khi trang đã tải xong (Phòng trường hợp back/forward cache)
+        window.addEventListener("pageshow", function () {
+            document.body.classList.remove("loading");
+        });
+    });
+</script>

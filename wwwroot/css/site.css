@@ -1,0 +1,264 @@
+﻿/* =========================================
+   1. CẤU HÌNH FONTS (Đường dẫn Local)
+   ========================================= */
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/Inter_18pt-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/Inter_18pt-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'M PLUS Rounded 1c';
+    src: url('../fonts/MPLUSRounded1c-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'M PLUS Rounded 1c';
+    src: url('../fonts/MPLUSRounded1c-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* =========================================
+   2. CẤU HÌNH CHUNG & LAYOUT (Sửa lỗi Footer)
+   ========================================= */
+:root {
+    --bg-body: #1a1a2e; /* Nền tím than đậm */
+    --bg-dark-custom: #1e2a3a; /* Nền Navbar/Card */
+    --color-primary: #82a0d9; /* Màu xanh chủ đạo */
+    --text-light: #e0e6ed; /* Màu chữ sáng */
+    --text-muted: #a0aec0; /* Màu chữ mờ */
+}
+
+html {
+/*    font-size: 14px;*/
+    position: relative;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+body {
+    background-color: var(--bg-body);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-light);
+    /* Setup Sticky Footer (Footer luôn ở đáy) */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin-bottom: 0 !important;
+}
+
+main {
+    flex: 1; /* Đẩy footer xuống dưới cùng */
+}
+
+/* Hiệu ứng nhấc nhẹ menu khi hover */
+.nav-link-hover-effect {
+    transition: all 0.3s ease;
+}
+
+    .nav-link-hover-effect:hover {
+        transform: translateY(-2px);
+        color: #0d6efd !important; /* Màu xanh primary */
+    }
+
+/* Hiệu ứng nút bấm phóng to */
+.btn-hover-scale {
+    transition: transform 0.2s;
+}
+
+    .btn-hover-scale:hover {
+        transform: scale(1.05);
+    }
+
+/* Placeholder màu xám nhạt cho ô tìm kiếm */
+.search-input::placeholder {
+    color: #a0aec0 !important;
+    opacity: 1;
+}
+
+
+/*End Nav*/
+
+
+/* =========================================
+   5. FOOTER (Sửa lỗi màu chữ)
+   ========================================= */
+.footer {
+    background-color: #121621;
+    border-top: 1px solid #2d3748;
+    color: #a0aec0 !important; /* Ép màu chữ xám sáng */
+    padding: 2rem 0;
+    margin-top: auto;
+}
+
+.footer a {
+        color: var(--color-primary);
+        text-decoration: none;
+}
+
+/* =========================================
+   6. CẤU HÌNH chuông 
+   ========================================= */
+.notification-container {
+    cursor: pointer;
+    margin-right: 15px;
+    padding: 5px;
+}
+
+/* Hiệu ứng rung chuông khi hover */
+.notification-container:hover .bi-bell-fill {
+    color: #fff;
+    animation: bellShake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes bellShake {
+    0% {
+        transform: rotate(0);
+    }
+
+    15% {
+        transform: rotate(5deg);
+    }
+
+    30% {
+        transform: rotate(-5deg);
+    }
+
+    45% {
+        transform: rotate(4deg);
+    }
+
+    60% {
+        transform: rotate(-4deg);
+    }
+
+    75% {
+        transform: rotate(2deg);
+    }
+
+    85% {
+        transform: rotate(-2deg);
+    }
+
+    100% {
+        transform: rotate(0);
+    }
+}
+
+/* TOOLTIP BOX */
+.notification-tooltip {
+    display: none; /* Mặc định ẩn */
+    position: absolute;
+    top: 140%; /* Nằm dưới chuông */
+    right: -20px; /* Căn chỉnh */
+    width: 220px;
+    /* Màu xanh Gradient giống hình */
+    background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+    color: white;
+    padding: 15px;
+    border-radius: 12px;
+    z-index: 9999;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    /* Animation hiện lên */
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+/* Hiện tooltip khi hover */
+.notification-container:hover .notification-tooltip {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Mũi tên tam giác trỏ lên */
+.tooltip-arrow {
+    position: absolute;
+    top: -8px;
+    right: 25px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #0ea5e9; /* Màu trùng đỉnh tooltip */
+}
+
+/* --- ANIMATION MƯỢT MÀ --- */
+
+/* 1. Định nghĩa hiệu ứng trượt nhẹ từ dưới lên */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 2. Class áp dụng animation */
+.animate-fade-in {
+    opacity: 0; /* Mặc định ẩn để đợi animation */
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 3. Màn hình Loading che toàn bộ trang */
+#global-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #1a202c; /* Màu trùng nền web */
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease;
+    opacity: 0;
+    pointer-events: none; /* Để bấm xuyên qua được khi ẩn */
+}
+
+/* Hiệu ứng xoay vòng tròn loading */
+.loader-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255,255,255,0.1);
+    border-top: 4px solid var(--bs-primary); /* Màu xanh chủ đạo */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Class để kích hoạt loader */
+body.loading #global-loader {
+    opacity: 1;
+    pointer-events: all;
+}
