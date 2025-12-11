@@ -7,112 +7,138 @@
 }
 
 <style>
-    /* 1. Animation mượt mà khi load trang */
-    .fade-in {
-        animation: fadeIn 0.5s ease-in-out;
+    /* --- 1. TỐI ƯU HIỂN THỊ ẢNH (QUAN TRỌNG NHẤT) --- */
+
+    /* Khung bao ngoài mỗi ảnh: Giữ chỗ để không bị nhảy layout */
+    .image-wrapper {
+        position: relative;
+        min-height: 300px; /* Chiều cao tối thiểu dự kiến */
+        background-color: #f0f2f5; /* Màu nền xám skeleton */
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+        overflow: hidden;
     }
 
-    @@keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
+    /* Hiệu ứng loading quay quay */
+    .image-loader {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border: 4px solid #e0e0e0;
+        border-top: 4px solid #0d6efd; /* Màu xanh */
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        z-index: 1; /* Nằm dưới ảnh */
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
         }
 
-        to {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Ảnh chính: Mặc định ẩn (opacity 0) */
+    .manga-image {
+        opacity: 0;
+        transition: opacity 0.6s ease-out; /* Hiện ra từ từ trong 0.6s */
+        z-index: 2; /* Nằm đè lên loader */
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: contain;
+    }
+
+        /* Class này sẽ được JS thêm vào khi ảnh tải xong */
+        .manga-image.loaded {
             opacity: 1;
-            transform: translateY(0);
         }
-    }
 
-    /* 2. Container chứa ảnh */
-    .reading-content img {
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Đổ bóng nhẹ cho ảnh */
-        background-color: #f0f2f5; /* Màu nền chờ khi ảnh chưa load */
-        min-height: 200px; /* Tránh layout shift (giật khung hình) */
-    }
-
-    /* 3. Khoảng trống dưới cùng để không bị thanh menu che */
+    /* --- 2. CÁC PHẦN UI KHÁC (GIỮ NGUYÊN) --- */
     .page-spacer {
-        height: 80px;
+        height: 100px;
     }
 
-    /* 4. Thanh điều khiển cố định bên dưới (Bottom Bar) */
     .bottom-control-bar {
         position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
-        background: rgba(255, 255, 255, 0.95); /* Màu trắng hơi trong suốt */
-        backdrop-filter: blur(10px); /* Hiệu ứng mờ đục (Glassmorphism) */
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
         border-top: 1px solid #e0e0e0;
         padding: 10px 15px;
         z-index: 1000;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 10px;
-        transition: transform 0.3s ease-in-out;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
     }
 
-    /* Ẩn thanh menu khi cuộn xuống (nếu muốn) - Ở đây tôi để luôn hiện cho tiện */
-
-    /* 5. Nút Back to Top */
     #btn-back-to-top {
         position: fixed;
-        bottom: 80px; /* Nằm trên thanh control bar */
+        bottom: 80px;
         right: 20px;
-        display: none; /* Mặc định ẩn */
+        display: none;
         z-index: 1001;
         width: 45px;
         height: 45px;
         border-radius: 50%;
-        background-color: #0d6efd; /* Màu xanh primary */
-        color: white;
         border: none;
+        background-color: #0d6efd;
+        color: white;
         box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         transition: all 0.3s;
     }
 
         #btn-back-to-top:hover {
+            transform: translateY(-3px);
             background-color: #0b5ed7;
-            transform: translateY(-3px); /* Nhảy nhẹ lên khi hover */
         }
 
-    /* Responsive cho Mobile */
     @@media (max-width: 576px) {
-        .bottom-control-bar {
-            padding: 8px;
-            gap: 5px;
-        }
-        /* Ẩn chữ "Chap trước/sau" trên mobile cho gọn, chỉ hiện icon */
         .btn-nav-text {
             display: none;
         }
 
         .chapter-select {
-            max-width: 150px; /* Giới hạn chiều rộng dropdown trên mobile */
+            max-width: 150px;
         }
+
+        .image-wrapper {
+            min-height: 200px;
+        }
+        /* Mobile thì giữ chỗ thấp hơn chút */
     }
 </style>
 
-<div class="container mt-4 fade-in">
-    <div class="mb-3">
-        <a href="@Url.Action("Detail", "Home", new { slug = Model.MangaSlug })" class="btn btn-outline-secondary btn-sm border-0">
+<div class="container mt-4">
+    <div class="mb-4 text-center">
+        <a href="@Url.Action("Detail", "Home", new { slug = Model.MangaSlug })" class="btn btn-outline-secondary btn-sm border-0 mb-2">
             <i class="bi bi-arrow-left"></i> Trở về trang truyện
         </a>
-        <h4 class="text-center mt-2 fw-bold text-primary">Chapter: @Model.CurrentChapterName</h4>
+        <h5 class="fw-bold text-primary">@Model.CurrentChapterName</h5>
     </div>
 
-    <div class="reading-content text-center">
+    <div class="reading-content mw-100" style="max-width: 800px; margin: 0 auto;">
         @if (Model.CurrentChapter?.Item?.ChapterImage != null)
         {
             foreach (var img in Model.CurrentChapter.Item.ChapterImage)
             {
-                <img src="@($"{domainCdn}/{Model.CurrentChapter.Item.ChapterPath}/{img.ImageFile}")"
-                     class="img-fluid d-block mx-auto mb-1 rounded"
-                     alt="Page @img.ImagePage"
-                     loading="lazy" />
+                <div class="image-wrapper">
+                    <div class="image-loader"></div>
+
+                    <img data-src="@($"{domainCdn}/{Model.CurrentChapter.Item.ChapterPath}/{img.ImageFile}")"
+                         class="manga-image lazy-load"
+                         alt="Page @img.ImagePage" />
+                </div>
             }
         }
     </div>
@@ -127,82 +153,105 @@
 <div class="bottom-control-bar">
     @if (!string.IsNullOrEmpty(Model.PrevChapterId))
     {
-        <a href="@Url.Action("ReadChapter", "Home", new { slug = Model.MangaSlug, chapterId = Model.PrevChapterId })"
-           class="btn btn-outline-primary rounded-pill">
+        <a href="@Url.Action("ReadChapter", "Home", new { slug = Model.MangaSlug, chapterId = Model.PrevChapterId })" class="btn btn-outline-primary rounded-pill">
             <i class="bi bi-chevron-left"></i> <span class="btn-nav-text">Trước</span>
         </a>
     }
     else
     {
-        <button class="btn btn-outline-secondary rounded-pill" disabled>
-            <i class="bi bi-chevron-left"></i>
-        </button>
+        <button class="btn btn-outline-secondary rounded-pill" disabled><i class="bi bi-chevron-left"></i></button>
     }
 
     <select class="form-select w-auto chapter-select shadow-none border-primary" onchange="window.location.href = this.value;">
         @foreach (var chap in Model.ChapterList)
         {
             var cleanId = chap.ChapterApiData.Split('/').Last();
-            var isSelected = cleanId == Model.CurrentChapterId ? "selected" : "";
             var link = Url.Action("ReadChapter", "Home", new { slug = Model.MangaSlug, chapterId = cleanId });
-
-            if (isSelected == "selected")
-            {
-                <option value="@link" selected>Chapter @chap.ChapterName</option>
-            }
-            else
-            {
-                <option value="@link">Chapter @chap.ChapterName</option>
-            }
+            <!option value="@link" @(cleanId == Model.CurrentChapterId ? "selected" : "")>Chapter @chap.ChapterName</!option>
         }
     </select>
 
     @if (!string.IsNullOrEmpty(Model.NextChapterId))
     {
-        <a href="@Url.Action("ReadChapter", "Home", new { slug = Model.MangaSlug, chapterId = Model.NextChapterId })"
-           class="btn btn-primary rounded-pill">
+        <a href="@Url.Action("ReadChapter", "Home", new { slug = Model.MangaSlug, chapterId = Model.NextChapterId })" class="btn btn-primary rounded-pill">
             <span class="btn-nav-text">Sau</span> <i class="bi bi-chevron-right"></i>
         </a>
     }
     else
     {
-        <button class="btn btn-secondary rounded-pill" disabled>
-            <i class="bi bi-chevron-right"></i>
-        </button>
+        <button class="btn btn-secondary rounded-pill" disabled><i class="bi bi-chevron-right"></i></button>
     }
 </div>
 
 <script>
-    // 1. Logic nút Back to Top
+    // --- 1. SCRIPT QUẢN LÝ LAZY LOAD MƯỢT MÀ ---
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // Cấu hình Observer: Khi ảnh xuất hiện 10% trong màn hình thì mới bắt đầu tải
+        let observerOptions = {
+            root: null,
+            rootMargin: "0px 0px 200px 0px", // Tải trước khi cuộn tới 200px để người dùng ko phải chờ lâu
+            threshold: 0.1
+        };
+
+        let imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    let img = entry.target;
+
+                    // Lấy link thật từ data-src gán vào src
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+
+                        // Khi ảnh tải xong -> Xóa loader, hiện ảnh từ từ
+                        img.onload = function() {
+                            img.classList.add("loaded"); // Kích hoạt CSS transition opacity
+
+                            // Tìm cái loader cùng cấp và ẩn nó đi (hoặc xóa wrapper background)
+                            let wrapper = img.closest('.image-wrapper');
+                            if(wrapper) {
+                                // Xóa loader đi
+                                let loader = wrapper.querySelector('.image-loader');
+                                if(loader) loader.style.display = 'none';
+
+                                // Đổi màu nền wrapper thành trong suốt hoặc trắng
+                                wrapper.style.backgroundColor = 'transparent';
+                                // Reset chiều cao tối thiểu để vừa khít với ảnh
+                                wrapper.style.minHeight = 'auto';
+                            }
+                        };
+                    }
+                    // Ngừng theo dõi ảnh này
+                    observer.unobserve(img);
+                }
+            });
+        }, observerOptions);
+
+        // Bắt đầu theo dõi tất cả ảnh có class .lazy-load
+        let images = document.querySelectorAll(".lazy-load");
+        images.forEach(img => {
+            imageObserver.observe(img);
+        });
+    });
+
+    // --- 2. LOGIC SCROLL & NAVIGATE (Giữ nguyên) ---
     var mybutton = document.getElementById("btn-back-to-top");
-
     window.onscroll = function () {
-        scrollFunction();
-    };
-
-    function scrollFunction() {
-        // Hiện nút khi cuộn quá 300px
         if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
             mybutton.style.display = "block";
         } else {
             mybutton.style.display = "none";
         }
-    }
+    };
+    function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-    function scrollToTop() {
-        // Cuộn mượt lên đầu
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // 2. Logic phím tắt (Mũi tên trái/phải để chuyển chap)
     document.addEventListener('keydown', function(event) {
         if (event.key === "ArrowLeft") {
-            var prevBtn = document.querySelector(".bottom-control-bar .btn-outline-primary");
-            if(prevBtn) prevBtn.click();
-        }
-        else if (event.key === "ArrowRight") {
-            var nextBtn = document.querySelector(".bottom-control-bar .btn-primary");
-            if(nextBtn) nextBtn.click();
+            let btn = document.querySelector(".bottom-control-bar a:first-child");
+            if(btn) btn.click();
+        } else if (event.key === "ArrowRight") {
+            let btn = document.querySelector(".bottom-control-bar a:last-child");
+            if(btn) btn.click();
         }
     });
 </script>
