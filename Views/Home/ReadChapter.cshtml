@@ -124,7 +124,7 @@
         <a href="@Url.Action("Detail", "Home", new { slug = Model.MangaSlug })" class="btn btn-outline-secondary btn-sm border-0 mb-2">
             <i class="bi bi-arrow-left"></i> Trở về trang truyện
         </a>
-        <h5 class="fw-bold text-primary">@Model.CurrentChapterName</h5>
+        <h3 class="fw-bold text-primary">Chương: @Model.CurrentChapterName</h3>
     </div>
 
     <div class="reading-content mw-100" style="max-width: 800px; margin: 0 auto;">
@@ -167,7 +167,7 @@
         {
             var cleanId = chap.ChapterApiData.Split('/').Last();
             var link = Url.Action("ReadChapter", "Home", new { slug = Model.MangaSlug, chapterId = cleanId });
-            <!option value="@link" @(cleanId == Model.CurrentChapterId ? "selected" : "")>Chapter @chap.ChapterName</!option>
+            <!option value="@link" @(cleanId == Model.CurrentChapterId ? "selected" : "")>Chapter: @chap.ChapterName</!option>
         }
     </select>
 
