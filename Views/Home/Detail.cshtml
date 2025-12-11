@@ -160,7 +160,7 @@
                     <div class="d-grid gap-2">
                         @if (firstChapter != null)
                         {
-                            <a href="@Url.Action("Read", "Home", new { slug = ViewContext.RouteData.Values["slug"], chapter = firstChapter.ChapterName })"
+                            <a href="@Url.Action("ReadChapter", "Home", new { slug = @Model.Item.Slug, chapterId = firstChapter?.ChapterApiData?.Split('/')?.Last() })"
                                class="btn btn-primary btn-read-action">
                                 <i class="bi bi-book-half me-2"></i> Đọc ngay
                             </a>

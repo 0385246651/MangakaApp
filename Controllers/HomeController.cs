@@ -182,6 +182,90 @@ namespace MangakaApp.Controllers
             return View(data);
         }
 
+        // --- ACTION 8: ĐỌC TRUYỆN (MỚI) ---
+        public async Task<IActionResult> ReadChapter(string slug, string chapterId)
+        {
+            if (string.IsNullOrEmpty(slug) || string.IsNullOrEmpty(chapterId))
+            {
+                return RedirectToAction("Index");
+            }
+
+            // 1. Gọi song song 2 API để tối ưu tốc độ
+            var taskMangaDetail = _otruyenService.GetMangaDetailAsync(slug);
+            var taskChapterDetail = _otruyenService.GetChapterDetailAsync(chapterId);
+
+            await Task.WhenAll(taskMangaDetail, taskChapterDetail);
+
+            var mangaData = taskMangaDetail.Result;
+            var chapterData = taskChapterDetail.Result;
+
+            // Kiểm tra dữ liệu
+            if (mangaData == null || chapterData == null)
+            {
+                return NotFound();
+            }
+
+            // 2. Xử lý danh sách Chapter
+            // Trong Model Otruyen, Chapter nằm trong mảng ServerVolume -> ServerData
+            // Chúng ta sẽ lấy danh sách từ Server đầu tiên (thường là server chính)
+            List<ChapterItem> allChapters = new List<ChapterItem>();
+
+            if (mangaData.Item.Chapters != null && mangaData.Item.Chapters.Count > 0)
+            {
+                // Lấy dữ liệu từ server đầu tiên
+                allChapters = mangaData.Item.Chapters[0].ServerData;
+            }
+
+            // 3. Tìm vị trí chapter hiện tại để tính Next/Prev
+            // Lưu ý: api_data chính là chapterId
+            // SỬA 1: Dùng .EndsWith() thay vì == để tìm ID trong đường dẫn dài
+            var currentIndex = allChapters.FindIndex(c => c.ChapterApiData.EndsWith(chapterId));
+
+            string nextChapId = null;
+            string prevChapId = null;
+
+            if (currentIndex != -1)
+            {
+                // Logic: Danh sách thường sắp xếp từ Mới nhất (index 0) -> Cũ nhất (index cuối)
+
+                // Chap CŨ HƠN (Prev) -> Là phần tử có index lớn hơn (về phía cuối mảng)
+                if (currentIndex > 0)
+                {
+                    // SỬA 2: Phải CẮT CHUỖI ngay ở đây để lấy ID sạch cho nút bấm
+                    prevChapId = allChapters[currentIndex - 1].ChapterApiData.Split('/').Last();
+                }
+
+               
+                // Chap MỚI HƠN (Next) -> Là phần tử có index nhỏ hơn (về phía 0)
+                if (currentIndex < allChapters.Count - 1)
+                {
+                    // SỬA 2: Phải CẮT CHUỖI ngay ở đây
+                    nextChapId = allChapters[currentIndex + 1].ChapterApiData.Split('/').Last();
+                }
+            }
+
+            // 4. Tạo ViewModel
+            var viewModel = new ReadChapterVM
+            {
+                CurrentChapter = new ChapterDetailData { 
+                     DomainCdn = chapterData.DomainCdn,
+                     Item = chapterData.Item
+                } , // Dữ liệu ảnh
+                ChapterList = allChapters,         // Danh sách chap
+                MangaSlug = slug,
+                CurrentChapterId = chapterId,
+                CurrentChapterName = chapterData.Item.ChapterName,
+                NextChapterId = nextChapId,
+                PrevChapterId = prevChapId
+            };
+
+            // Đường dẫn ảnh CDN cần xử lý domain
+            ViewData["DomainCdn"] = chapterData.DomainCdn;
+            ViewData["Title"] = $"{chapterData.Item.ComicName} - Chapter {chapterData.Item.ChapterName}";
+
+            return View(viewModel);
+        }
+
         // --- HÀM PHỤ TRỢ (PRIVATE METHOD) ---
         // Giúp code gọn hơn, không phải viết lại công thức tính toán nhiều lần
         private void SetupPagination(MangaListData data)
