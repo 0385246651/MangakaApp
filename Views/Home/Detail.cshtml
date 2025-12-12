@@ -288,14 +288,14 @@
             @if (Model.Item?.Chapters != null && Model.Item.Chapters.Any())
             {
                 // Lấy server đầu tiên (thường là server chính)
-                var server = Model.Item.Chapters.First();
+                ServerVolume server = Model.Item.Chapters.First();
 
                 if (server.ServerData != null)
                 {
                     <ul class="chapter-list" id="chapterList">
-                        @foreach (var chapter in server.ServerData)
+                        @foreach (ChapterItem chapter in server.ServerData)
                         {
-                            string readLink = Url.Action("Read", "Home", new { slug = ViewContext.RouteData.Values["slug"], chapter = chapter.ChapterName });
+                            string readLink = Url.Action("ReadChapter", "Home", new { slug = @Model.Item.Slug, chapterId = chapter?.ChapterApiData?.Split('/')?.Last() });
 
                             <li>
                                 <a href="@readLink" class="chapter-item">
