@@ -31,21 +31,20 @@
                     </span>
                 </a>
 
-                @* Nút Mobile Menu *@
-                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                @* Nút Mobile Menu (Hamburger) *@
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="collapse navbar-collapse mt-3 mt-lg-0" id="navbarNav">
 
-                    @* THANH TÌM KIẾM RESPONSIVE 
-                   - Trên PC (lg): margin-auto để ra giữa.
-                   - Trên Mobile: width 100%.
+                    @* THANH TÌM KIẾM: 
+                   - Mobile: margin-bottom-3 (cách menu ra), width 100%
+                   - PC: margin-auto (ra giữa), margin-bottom-0
                 *@
-                    <form class="d-flex my-3 my-lg-0 mx-lg-auto search-bar-responsive"
+                    <form class="d-flex mb-3 mb-lg-0 mx-lg-auto search-bar-responsive"
                           asp-controller="Home" asp-action="Search" method="get">
-
                         <div class="input-group bg-white bg-opacity-10 rounded-pill border border-secondary px-2 w-100">
                             <span class="input-group-text bg-transparent border-0 text-white-50">
                                 <i class="bi bi-search"></i>
@@ -57,61 +56,64 @@
                         </div>
                     </form>
 
-                    @* Danh sách Menu *@
-                    <ul class="navbar-nav align-items-lg-center gap-2 pt-2 pt-lg-0">
-
-                        @* ... Các menu Truyện hot, Đang phát hành... GIỮ NGUYÊN ... *@
-                        <li class="nav-item">
-                            <a class="nav-link text-light fw-medium nav-link-hover-effect" href="/Home/HotManga">
-                                <i class="bi bi-fire me-1 text-danger"></i>Hot
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light fw-medium nav-link-hover-effect" href="/Home/ReleasingManga">
-                                <i class="bi bi-star me-1 text-warning"></i>Mới
-                            </a>
-                        </li>
-
-                         <li class="nav-item">
-                            <a class="nav-link text-light fw-medium nav-link-hover-effect" href="/Home/ReleasingManga">
-                                <i class="bi bi-hourglass-split me-1 text-warning"></i>Đang
-                            </a>
-                        </li
-
-                        <li class="nav-item">
-                            <a class="nav-link text-light fw-medium nav-link-hover-effect" href="/Home/DoneManga">
-                                <i class="bi bi-check-circle-fill me-1 text-warning"></i>Xong
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link text-light fw-medium nav-link-hover-effect" href="/Home/CommingManga">
-                                <i class="bi-clock-history me-1 text-warning"></i>Sắp
-                            </a>
-                        </li>
+                    @* MENU ITEM *@
+                    <ul class="navbar-nav align-items-lg-center gap-2 gap-lg-3">
 
                         @* Dropdown Thể loại *@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-light fw-medium nav-link-hover-effect" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-tags me-1"></i>Thể loại
+                                <i class="bi bi-tags me-2 me-lg-1"></i>Thể loại
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-dark shadow border-secondary"
+                            <ul class="dropdown-menu dropdown-menu-dark shadow border-secondary animate-slide-down"
                                 aria-labelledby="navbarDropdown"
                                 style="background-color: #2d3748; max-height: 400px; overflow-y: auto;">
                                 @await Component.InvokeAsync("CategoryMenu")
                             </ul>
                         </li>
 
-                        @* CHUÔNG THÔNG BÁO AJAX *@
-                        <li class="nav-item d-flex align-items-center ms-lg-3 mt-2 mt-lg-0">
-                            <div class="notification-container position-relative">
-                                <div class="nav-link text-light position-relative cursor-pointer notification-icon p-0">
-                                    <i class="bi bi-bell-fill" style="font-size: 1.4rem;"></i>
-                                    <span id="msg-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-dark d-none"
-                                          style="font-size: 0.6rem; padding: 0.25em 0.5em;">0</span>
+                        @* Các mục menu *@
+                        <li class="nav-item">
+                            <a class="nav-link text-light fw-medium nav-link-hover-effect" href="/Home/HotManga">
+                                <i class="bi bi-fire me-2 me-lg-1 text-danger"></i>Hot
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light fw-medium nav-link-hover-effect" href="/Home/ReleasingManga">
+                                <i class="bi bi-star me-2 me-lg-1 text-warning"></i>Mới
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light fw-medium nav-link-hover-effect" href="/Home/ReleasingManga">
+                                <i class="bi bi-hourglass-split me-2 me-lg-1 text-warning"></i>Đang
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light fw-medium nav-link-hover-effect" href="/Home/DoneManga">
+                                <i class="bi bi-check-circle-fill me-2 me-lg-1 text-warning"></i>Xong
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light fw-medium nav-link-hover-effect" href="/Home/CommingManga">
+                                <i class="bi bi-clock-history me-2 me-lg-1 text-warning"></i>Sắp
+                            </a>
+                        </li>
+
+                        
+
+                        @* CHUÔNG THÔNG BÁO: 
+                       - Mobile: margin-top để tách ra, border-top để phân cách
+                    *@
+                        <li class="nav-item d-flex align-items-center mt-3 mt-lg-0 pt-3 pt-lg-0 border-top border-secondary border-opacity-25 border-lg-0">
+                            <div class="notification-container position-relative w-100">
+                                <div class="nav-link text-light position-relative cursor-pointer notification-icon p-0 d-flex align-items-center">
+                                    <span class="d-lg-none me-auto fw-bold">Thông báo</span> <div class="position-relative">
+                                        <i class="bi bi-bell-fill" style="font-size: 1.4rem;"></i>
+                                        <span id="msg-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-dark d-none"
+                                              style="font-size: 0.6rem; padding: 0.25em 0.5em;">0</span>
+                                    </div>
                                 </div>
 
-                                @* Tooltip AJAX *@
+                                @* Tooltip AJAX (Giữ nguyên code tooltip cũ của bạn) *@
                                 <div class="notification-tooltip shadow-lg">
                                     <div class="tooltip-arrow"></div>
                                     <div class="d-flex align-items-center mb-2">
@@ -125,9 +127,6 @@
                                 </div>
                             </div>
                         </li>
-
-                        @* Nút Đăng nhập *@
-                        @* <li class="nav-item ms-lg-2 mt-2 mt-lg-0"> ... </li> *@
                     </ul>
                 </div>
             </div>
