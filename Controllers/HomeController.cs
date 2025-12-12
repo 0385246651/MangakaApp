@@ -35,7 +35,7 @@ namespace MangakaApp.Controllers
             // 1. Lấy dữ liệu
             MangaListData data = await _otruyenService.GetMangaByCategoryAsync(slug, page);
 
-            // 2. Tính toán phân trang (Hàm SetupPagination bạn đã viết ở bước trước)
+
             SetupPagination(data);
 
             // 3. Truyền thêm thông tin để View biết đường tạo Link
@@ -144,7 +144,7 @@ namespace MangakaApp.Controllers
         // --- ACTION 7: LẤY SỐ LƯỢNG TRUYỆN CẬP NHẬT TRONG NGÀY (MỚI) ---
         public async Task<IActionResult> GetDailyUpdateCount()
         {
-            // Gọi Service lấy dữ liệu (Hàm bạn cung cấp)
+      
             var data = await _otruyenService.GetHomeMangaAsync();
 
             // Lấy số lượng, mặc định là 0 nếu null
@@ -283,7 +283,7 @@ namespace MangakaApp.Controllers
                 int startPage = Math.Max(1, currentPage - 2);
                 int endPage = Math.Min(totalPages, currentPage + 2);
 
-                var pager = new PaginationVMModel // Đảm bảo bạn dùng đúng tên class ViewModel của bạn
+                var pager = new PaginationVMModel 
                 {
                     CurrentPage = currentPage,
                     TotalPages = totalPages,

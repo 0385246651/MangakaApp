@@ -13,11 +13,11 @@ WORKDIR "/src/."
 # Build ra bản Release
 RUN dotnet build "MangakaApp.csproj" -c Release -o /app/build
 
-# Xuất bản (Publish) RUN dotnet publish: Là lệnh đóng gói code lại (giống như khi bạn bấm Publish trong Visual Studio vậy).
+# Xuất bản (Publish) RUN dotnet publish: Là lệnh đóng gói code lại (giống như khi  bấm Publish trong Visual Studio ).
 FROM build AS publish
 RUN dotnet publish "MangakaApp.csproj" -c Release -o /app/publish
 
-# 2. GIAI ĐOẠN CHẠY (Dùng môi trường ASP.NET 10 để chạy cho nhẹ) Là lệnh bảo máy chủ tải bộ công cụ .NET 10 về. Là lệnh copy code từ máy bạn vào máy chủ.
+# 2. GIAI ĐOẠN CHẠY (Dùng môi trường ASP.NET 10 để chạy cho nhẹ) Là lệnh bảo máy chủ tải bộ công cụ .NET 10 về. Là lệnh copy code từ máy local vào máy chủ.
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish . 
